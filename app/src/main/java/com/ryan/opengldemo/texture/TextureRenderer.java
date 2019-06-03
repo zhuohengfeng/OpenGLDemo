@@ -8,6 +8,7 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
 
 import com.ryan.opengldemo.R;
+import com.ryan.opengldemo.utils.Logger;
 import com.ryan.opengldemo.utils.ShaderUtil;
 
 import java.nio.ByteBuffer;
@@ -21,10 +22,13 @@ class TextureRenderer implements GLSurfaceView.Renderer {
 
     private Context mContext;
 
+    private int mDrawType = 0;
+
     private int mProgram;
     private int mAttrVertex;
     private int mAttrTexurePos;
     private int mUniTexureId;
+    private int mUniDrawType;
 
     private FloatBuffer mVertexBuffer;
     private FloatBuffer mTextureCoordsBuffer;
@@ -98,6 +102,7 @@ class TextureRenderer implements GLSurfaceView.Renderer {
         mAttrVertex = GLES20.glGetAttribLocation(mProgram, "aVertex");
         mAttrTexurePos = GLES20.glGetAttribLocation(mProgram, "aTexture");
         mUniTexureId = GLES20.glGetUniformLocation(mProgram, "uTextureId");
+        mUniDrawType = GLES20.glGetUniformLocation(mProgram, "uDrawType");
     }
 
     @Override
@@ -120,6 +125,7 @@ class TextureRenderer implements GLSurfaceView.Renderer {
         GLES20.glUseProgram(mProgram);
 
         GLES20.glUniform1i(mUniTexureId, 0); // 表示第0个texture，一共可以有32个texure,
+        GLES20.glUniform1i(mUniDrawType, mDrawType);
 
         //将顶点位置数据传送进渲染管线
         GLES20.glVertexAttribPointer(
@@ -150,13 +156,7 @@ class TextureRenderer implements GLSurfaceView.Renderer {
         GLES20.glDisableVertexAttribArray(mAttrTexurePos);//启用顶点着色数据
     }
 
-    public void setFilter(boolean isChecked) {
-
-
-    }
-
-    public void setBigEye(boolean isChecked) {
-
-
+    public void setDrawType(int i) {
+        mDrawType = i;
     }
 }

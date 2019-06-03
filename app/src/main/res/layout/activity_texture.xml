@@ -9,28 +9,47 @@
         android:layout_height="match_parent" />
 
 
-    <LinearLayout
-        android:layout_marginTop="50dp"
+    <RadioGroup
+        android:id="@+id/rb_group"
+        android:layout_gravity="top"
         android:orientation="horizontal"
+        android:background="#80D5D5D5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <CheckBox
-            android:id="@+id/cb_filter"
-            android:text="磨皮"
+        <RadioButton
+            android:id="@+id/rb_normal"
+            android:text="原图"
+            android:textColor="#ff00ff"
+            android:layout_weight="1"
+            android:checked="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <RadioButton
+            android:id="@+id/rb_gray"
+            android:text="黑白"
             android:textColor="#ff00ff"
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <CheckBox
-            android:id="@+id/cb_eys"
-            android:text="大眼"
+        <RadioButton
+            android:id="@+id/rb_blur"
+            android:text="模糊"
             android:textColor="#ff00ff"
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-    </LinearLayout>
+        <RadioButton
+            android:id="@+id/rb_magn"
+            android:text="放大"
+            android:textColor="#ff00ff"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </RadioGroup>
 
 </FrameLayout>
