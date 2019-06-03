@@ -41,6 +41,14 @@
             android:screenOrientation="portrait">
         </activity>
 
+        <activity android:name=".fbo.FBOActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity android:name=".egl.EGLActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
     </application>
 
 </manifest>

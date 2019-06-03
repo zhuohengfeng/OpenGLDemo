@@ -8,7 +8,7 @@
 
     <Button
         android:onClick="onStartTriangle"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="20dp"
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_width="200dp"
@@ -17,7 +17,7 @@
 
     <Button
         android:onClick="onStartCube"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_width="200dp"
@@ -26,7 +26,7 @@
 
     <Button
         android:onClick="onStartTexture"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_width="200dp"
@@ -35,11 +35,29 @@
 
     <Button
         android:onClick="onStartCamera"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_width="200dp"
         android:layout_height="60dp"
-        android:text="绘制Camera" />
+        android:text="渲染Camera" />
+
+    <Button
+        android:onClick="onStartFBO"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:text="FBO的使用" />
+
+    <Button
+        android:onClick="onStartEGL"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:text="EGL的使用" />
 
 </LinearLayout>
