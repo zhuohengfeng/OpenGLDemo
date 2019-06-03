@@ -3,6 +3,8 @@ package com.ryan.opengldemo.texture;
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import com.ryan.opengldemo.R;
 
@@ -12,6 +14,9 @@ public class TextureActivity extends Activity {
 
     private TextureRenderer mTextureRenderer;
 
+    private CheckBox mCbFilter;
+    private CheckBox mCbEye;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,10 +25,26 @@ public class TextureActivity extends Activity {
         mTextureRenderer = new TextureRenderer(this);
 
         mTextureSurfaceView = findViewById(R.id.gl_texture);
-        // 设置opengl es 2.0
         mTextureSurfaceView.setEGLContextClientVersion(2);
         mTextureSurfaceView.setRenderer(mTextureRenderer);
         mTextureSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+
+        mCbFilter = findViewById(R.id.cb_filter);
+        mCbFilter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mTextureRenderer.setFilter(isChecked);
+                mTextureSurfaceView.requestRender();
+            }
+        });
+        mCbEye = findViewById(R.id.cb_eys);
+        mCbEye.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mTextureRenderer.setBigEye(isChecked);
+                mTextureSurfaceView.requestRender();
+            }
+        });
     }
 
     @Override

@@ -149,4 +149,14 @@ class TextureRenderer implements GLSurfaceView.Renderer {
         GLES20.glDisableVertexAttribArray(mAttrVertex);//启用顶点位置数据
         GLES20.glDisableVertexAttribArray(mAttrTexurePos);//启用顶点着色数据
     }
+
+    public void setFilter(boolean isChecked) {
+
+
+    }
+
+    public void setBigEye(boolean isChecked) {
+
+
+    }
 }

@@ -16,6 +16,7 @@
         android:layout_height="wrap_content">
 
         <CheckBox
+            android:id="@+id/cb_filter"
             android:text="磨皮"
             android:textColor="#ff00ff"
             android:layout_weight="1"
@@ -23,6 +24,7 @@
             android:layout_height="wrap_content" />
 
         <CheckBox
+            android:id="@+id/cb_eys"
             android:text="大眼"
             android:textColor="#ff00ff"
             android:layout_weight="1"
