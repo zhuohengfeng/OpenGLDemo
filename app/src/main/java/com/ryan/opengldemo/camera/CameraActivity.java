@@ -1,51 +1,61 @@
 package com.ryan.opengldemo.camera;
 
 import android.app.Activity;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
-import com.ryan.opengldemo.utils.Logger;
+import com.ryan.opengldemo.R;
 
 public class CameraActivity extends Activity {
 
-    private CameraV2GLSurfaceView mCameraV2GLSurfaceView;
-    private CameraV2Api mCamera;
+    private GLSurfaceView mTextureSurfaceView;
+
+    private CameraRenderer mTextureRenderer;
+
+    private CameraV2Api mCamera2Api;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_camera);
 
-        mCameraV2GLSurfaceView = new CameraV2GLSurfaceView(this);
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        mCamera = new CameraV2Api(this);
-        mCamera.setupCamera(dm.widthPixels, dm.heightPixels);
-        if (!mCamera.openCamera()) {
-            Logger.e("failed to open camera");
-            return;
-        }
-        mCameraV2GLSurfaceView.init(mCamera, false, CameraActivity.this);
-        setContentView(mCameraV2GLSurfaceView);
+        mTextureRenderer = new CameraRenderer(this);
+
+        mTextureSurfaceView = findViewById(R.id.gl_camera);
+        mTextureSurfaceView.setEGLContextClientVersion(2);
+        mTextureSurfaceView.setRenderer(mTextureRenderer);
+        mTextureSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+
+        mCamera2Api = new CameraV2Api(this);
+        mTextureRenderer.setCamera(mCamera2Api);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mCameraV2GLSurfaceView.onResume();
+        mTextureSurfaceView.onResume();
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        mCamera2Api.openCamera(dm.widthPixels, dm.heightPixels);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mCameraV2GLSurfaceView.onPause();
+        mTextureSurfaceView.onPause();
+        mCamera2Api.closeCamera();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mCamera != null) {
-            mCamera.releaseCamera();
-        }
+        mCamera2Api.releaseCamera();
+    }
+
+    public GLSurfaceView getSurfaceView() {
+        return mTextureSurfaceView;
     }
 }

@@ -1,9 +1,8 @@
-attribute vec4 aPosition;
+attribute vec4 aVertex;
+attribute vec4 aTexture;
+varying vec2 vTexture;
 uniform mat4 uTextureMatrix;
-attribute vec4 aTextureCoordinate;
-varying vec2 vTextureCoord;
-void main()
-{
-    vTextureCoord = (uTextureMatrix * aTextureCoordinate).xy;
-    gl_Position = aPosition;
+void main() {
+    vTexture = (uTextureMatrix * aTexture).xy;
+    gl_Position = aVertex;
 }

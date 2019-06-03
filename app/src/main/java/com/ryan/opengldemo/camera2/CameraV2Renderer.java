@@ -1,11 +1,10 @@
-package com.ryan.opengldemo.camera;
+package com.ryan.opengldemo.camera2;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.util.Log;
 
 import com.ryan.opengldemo.utils.Logger;
 
@@ -16,15 +15,12 @@ import javax.microedition.khronos.opengles.GL10;
 
 import static android.opengl.GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
 import static android.opengl.GLES20.GL_FLOAT;
-import static android.opengl.GLES20.GL_FRAMEBUFFER;
 import static android.opengl.GLES20.GL_TRIANGLES;
 import static android.opengl.GLES20.glActiveTexture;
-import static android.opengl.GLES20.glBindFramebuffer;
 import static android.opengl.GLES20.glBindTexture;
 import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glDrawArrays;
 import static android.opengl.GLES20.glEnableVertexAttribArray;
-import static android.opengl.GLES20.glGenFramebuffers;
 import static android.opengl.GLES20.glGetAttribLocation;
 import static android.opengl.GLES20.glGetUniformLocation;
 import static android.opengl.GLES20.glUniform1i;
@@ -40,13 +36,13 @@ public class CameraV2Renderer implements GLSurfaceView.Renderer {
     boolean bIsPreviewStarted;
     private int mOESTextureId = -1;
     private SurfaceTexture mSurfaceTexture;
-    private float[] transformMatrix = new float[16];
+    //private float[] transformMatrix = new float[16];
     private FilterEngine mFilterEngine;
     private FloatBuffer mDataBuffer;
     private int mShaderProgram = -1;
     private int aPositionLocation = -1;
     private int aTextureCoordLocation = -1;
-    private int uTextureMatrixLocation = -1;
+    //private int uTextureMatrixLocation = -1;
     private int uTextureSamplerLocation = -1;
     //private int[] mFBOIds = new int[1];
 
@@ -89,6 +85,8 @@ public class CameraV2Renderer implements GLSurfaceView.Renderer {
         mFilterEngine = new FilterEngine(mOESTextureId, mContext);
         mDataBuffer = mFilterEngine.getBuffer();
         mShaderProgram = mFilterEngine.getShaderProgram();
+
+        initSurfaceTexture();
         //glGenFramebuffers(1, mFBOIds, 0);
         //glBindFramebuffer(GL_FRAMEBUFFER, mFBOIds[0]);
         //Logger.d("onSurfaceCreated: mFBOId: " + mFBOIds[0]+", mOESTextureId="+mOESTextureId);
@@ -104,28 +102,29 @@ public class CameraV2Renderer implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl) {
         Long t1 = System.currentTimeMillis();
         if (mSurfaceTexture != null) {
+            //所以每当摄像头有新的数据来时，我们需要通过surfaceTexture.updateTexImage()更新预览上的图像
             mSurfaceTexture.updateTexImage();
-            mSurfaceTexture.getTransformMatrix(transformMatrix);
+            //mSurfaceTexture.getTransformMatrix(transformMatrix);
         }
 
-        if (!bIsPreviewStarted) {
-            bIsPreviewStarted = initSurfaceTexture();
-            bIsPreviewStarted = true;
-            return;
-        }
+//        if (!bIsPreviewStarted) {
+//            bIsPreviewStarted = initSurfaceTexture();
+//            bIsPreviewStarted = true;
+//            return;
+//        }
 
         //glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
 
         aPositionLocation = glGetAttribLocation(mShaderProgram, POSITION_ATTRIBUTE);
         aTextureCoordLocation = glGetAttribLocation(mShaderProgram, TEXTURE_COORD_ATTRIBUTE);
-        uTextureMatrixLocation = glGetUniformLocation(mShaderProgram, TEXTURE_MATRIX_UNIFORM);
+        //uTextureMatrixLocation = glGetUniformLocation(mShaderProgram, TEXTURE_MATRIX_UNIFORM);
         uTextureSamplerLocation = glGetUniformLocation(mShaderProgram, TEXTURE_SAMPLER_UNIFORM);
 
         glActiveTexture(GL_TEXTURE_EXTERNAL_OES); // 激活
         glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mOESTextureId); // 操作之前先绑定
         glUniform1i(uTextureSamplerLocation, 0); // 我们用的是Texture0
-        glUniformMatrix4fv(uTextureMatrixLocation, 1, false, transformMatrix, 0);
+        //glUniformMatrix4fv(uTextureMatrixLocation, 1, false, transformMatrix, 0);
 
         if (mDataBuffer != null) { // 设置顶点坐标
             mDataBuffer.position(0);

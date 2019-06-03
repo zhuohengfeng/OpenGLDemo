@@ -16,12 +16,13 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
+import android.widget.Toast;
 
 import com.ryan.opengldemo.utils.Logger;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,90 +31,138 @@ import java.util.List;
 
 public class CameraV2Api {
 
-    private Activity mActivity;
+    private WeakReference<Activity> mContext;
+
+    private HandlerThread mHandlerThread;
+    private Handler mBackgroundHandler;
+
+    private String mCameraID = "1";
     private CameraDevice mCameraDevice;
-    private String mCameraId;
-    private Size mPreviewSize;
-    private HandlerThread mCameraThread;
-    private Handler mCameraHandler;
-    private SurfaceTexture mSurfaceTexture;
+    private CameraCaptureSession mCameraCaptureSession;
     private CaptureRequest.Builder mCaptureRequestBuilder;
     private CaptureRequest mCaptureRequest;
-    private CameraCaptureSession mCameraCaptureSession;
+    private SurfaceTexture mSurfaceTexture;
+
+    private Size mPreviewSize;
 
     public CameraV2Api(Activity activity) {
-        mActivity = activity;
-        startCameraThread();
-    }
+        mContext = new WeakReference<>(activity);
 
-    public String setupCamera(int width, int height) {
-        CameraManager cameraManager = (CameraManager) mActivity.getSystemService(Context.CAMERA_SERVICE);
-        try {
-            for (String id : cameraManager.getCameraIdList()) {
-                CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(id);
-                if (characteristics.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT) {
-                    continue;
-                }
-                StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-                mPreviewSize = getOptimalSize(map.getOutputSizes(SurfaceTexture.class), width, height);
-                mCameraId = id;
-                Logger.d("preview width = " + mPreviewSize.getWidth() + ", height = " + mPreviewSize.getHeight() + ", cameraId = " + mCameraId);
-            }
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-        return mCameraId;
-    }
-
-    public void startCameraThread() {
-        mCameraThread = new HandlerThread("CameraThread");
-        mCameraThread.start();
-        mCameraHandler = new Handler(mCameraThread.getLooper());
-    }
-
-    public boolean openCamera() {
-        CameraManager cameraManager = (CameraManager) mActivity.getSystemService(Context.CAMERA_SERVICE);
-        try {
-            if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-            cameraManager.openCamera(mCameraId, mStateCallback, mCameraHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
+        mHandlerThread = new HandlerThread("camera_background");
+        mHandlerThread.start();
+        mBackgroundHandler = new Handler(mHandlerThread.getLooper());
     }
 
     public void releaseCamera() {
-        if (mCameraDevice != null) {
-            mCameraDevice.close();
-        }
-
-        if (mCameraThread != null) {
-            mCameraThread.quitSafely();
-            mCameraThread = null;
+        closeCamera();
+        if (mHandlerThread != null) {
+            mHandlerThread.quitSafely();
+            mHandlerThread = null;
         }
     }
 
-    public CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
+    public void openCamera(int width, int height) {
+        if (ActivityCompat.checkSelfPermission(mContext.get(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(mContext.get(), "请打开相机权限", Toast.LENGTH_LONG).show();
+            mContext.get().finish();
+            return;
+        }
+
+        try {
+            CameraManager cameraManager = (CameraManager) mContext.get().getSystemService(Context.CAMERA_SERVICE);
+            // 获取分辨率
+            CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(mCameraID);
+            StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+            mPreviewSize = getOptimalSize(map.getOutputSizes(SurfaceTexture.class), width, height);
+
+            cameraManager.openCamera(mCameraID, mStateCallback, mBackgroundHandler);
+        }
+        catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void closeCamera() {
+        if (mCameraDevice != null) {
+            mCameraDevice.close();
+            mCameraDevice = null;
+        }
+    }
+
+    private CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
         @Override
-        public void onOpened(@NonNull CameraDevice camera) {
+        public void onOpened(CameraDevice camera) {
             mCameraDevice = camera;
         }
 
         @Override
-        public void onDisconnected(@NonNull CameraDevice camera) {
+        public void onDisconnected(CameraDevice camera) {
             camera.close();
             mCameraDevice = null;
+
         }
 
         @Override
-        public void onError(@NonNull CameraDevice camera, int error) {
+        public void onError(CameraDevice camera, int error) {
             camera.close();
             mCameraDevice = null;
+            Logger.e("open camera error = "+error);
         }
     };
+
+
+    private CameraCaptureSession.StateCallback mSessionCallback = new CameraCaptureSession.StateCallback() {
+
+        @Override
+        public void onConfigured(CameraCaptureSession session) {
+            mCameraCaptureSession = session;
+
+        }
+
+        @Override
+        public void onConfigureFailed(CameraCaptureSession session) {
+
+        }
+    };
+
+
+    public void startPreview(SurfaceTexture surfaceTexture) {
+        mSurfaceTexture = surfaceTexture;
+        mSurfaceTexture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
+        mSurfaceTexture.setOnFrameAvailableListener(new SurfaceTexture.OnFrameAvailableListener() {
+            @Override
+            public void onFrameAvailable(SurfaceTexture surfaceTexture) {
+                ((CameraActivity)mContext.get()).getSurfaceView().requestRender();
+            }
+        });
+
+        Surface surface = new Surface(mSurfaceTexture);
+        try {
+            mCaptureRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+            mCaptureRequestBuilder.addTarget(surface);
+
+            mCameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
+                @Override
+                public void onConfigured(@NonNull CameraCaptureSession session) {
+                    try {
+                        mCaptureRequest = mCaptureRequestBuilder.build();
+                        mCameraCaptureSession = session;
+                        mCameraCaptureSession.setRepeatingRequest(mCaptureRequest, null, mBackgroundHandler);
+                    } catch (CameraAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onConfigureFailed(@NonNull CameraCaptureSession session) {
+
+                }
+            }, mBackgroundHandler);
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private Size getOptimalSize(Size[] sizeMap, int width, int height) {
         List<Size> sizeList = new ArrayList<>();
@@ -139,35 +188,12 @@ public class CameraV2Api {
         return sizeMap[0];
     }
 
-    public void setPreviewTexture(SurfaceTexture surfaceTexture) {
-        mSurfaceTexture = surfaceTexture;
-    }
-
-    public void startPreview() {
-        mSurfaceTexture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
-        Surface surface = new Surface(mSurfaceTexture);
-        try {
-            mCaptureRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-            mCaptureRequestBuilder.addTarget(surface);
-            mCameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
-                @Override
-                public void onConfigured(@NonNull CameraCaptureSession session) {
-                    try {
-                        mCaptureRequest = mCaptureRequestBuilder.build();
-                        mCameraCaptureSession = session;
-                        mCameraCaptureSession.setRepeatingRequest(mCaptureRequest, null, mCameraHandler);
-                    } catch (CameraAccessException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onConfigureFailed(@NonNull CameraCaptureSession session) {
-
-                }
-            }, mCameraHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
+    public void updateTexImage(float[] transformMatrix) {
+        if (mSurfaceTexture != null) {
+            //所以每当摄像头有新的数据来时，我们需要通过surfaceTexture.updateTexImage()更新预览上的图像
+            mSurfaceTexture.updateTexImage();
+            mSurfaceTexture.getTransformMatrix(transformMatrix);
         }
     }
+
 }

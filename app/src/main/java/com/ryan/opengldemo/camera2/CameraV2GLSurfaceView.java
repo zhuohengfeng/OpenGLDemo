@@ -1,4 +1,4 @@
-package com.ryan.opengldemo.camera;
+package com.ryan.opengldemo.camera2;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
