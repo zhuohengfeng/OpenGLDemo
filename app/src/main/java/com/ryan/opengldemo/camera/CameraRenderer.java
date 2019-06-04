@@ -146,7 +146,7 @@ class CameraRenderer implements GLSurfaceView.Renderer {
 
         GLES20.glActiveTexture(GL_TEXTURE_EXTERNAL_OES); // 激活
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mOESTextureId); // 操作之前先绑定
-        GLES20.glUniform1i(mUniTexureId, 0); // 表示第0个texture，一共可以有32个texure,
+        GLES20.glUniform1i(mUniTexureId, 0);
         GLES20.glUniform1i(mUniBeautyLocation, mIsBeautyOn ? 1 : 0);
 
         GLES20.glUniformMatrix4fv(uTextureMatrixLocation, 1, false, transformMatrix, 0);
@@ -156,7 +156,7 @@ class CameraRenderer implements GLSurfaceView.Renderer {
                 mAttrVertex, // 顶点坐标引用
                 2, // 每个顶点有3个值x, y
                 GLES20.GL_FLOAT, // 顶点类型
-                false, // 是否需要归一化，不需要，因为我们已经是在-1 ~ 1的范围内了
+                false, // 是否需要归一化
                 vertexStride, // 每个值占4个字节
                 mVertexBuffer
         );

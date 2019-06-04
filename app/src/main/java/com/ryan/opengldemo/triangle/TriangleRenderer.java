@@ -74,7 +74,6 @@ class TriangleRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        Logger.d("zhfzhf", "onSurfaceCreated");
         GLES20.glClearColor(0.5f,0.5f,0.5f,1.0f);
         initVertexData();
         initColorData();
@@ -83,13 +82,11 @@ class TriangleRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        Logger.d("zhfzhf", "onSurfaceChanged width="+width+", height="+height);
         GLES20.glViewport(0, 0, width, height);
     }
 
     @Override
     public void onDrawFrame(GL10 gl) {
-        Logger.d("zhfzhf", "onDrawFrame");
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
         //指定使用某套shader程序
         GLES20.glUseProgram(mProgram);
@@ -98,7 +95,7 @@ class TriangleRenderer implements GLSurfaceView.Renderer {
                 mAttrVertex, // 顶点坐标引用
                 3, // 每个顶点有3个值x, y, z
                 GLES20.GL_FLOAT, // 顶点类型
-                false, // 是否需要归一化，不需要，因为我们已经是在-1 ~ 1的范围内了
+                false, // 是否需要归一化
                 vertexStride, // 每个值占4个字节
                 mVertexBuffer
         );
