@@ -16,10 +16,6 @@ import android.widget.Toast;
 import com.ryan.opengldemo.R;
 import com.ryan.opengldemo.utils.Logger;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class FBOActivity extends Activity implements FBORenderer.Callback {
@@ -106,28 +102,27 @@ public class FBOActivity extends Activity implements FBORenderer.Callback {
     //图片保存
     public void saveBitmap(final Bitmap b){
         String path = mImgPath.substring(0,mImgPath.lastIndexOf("/")+1);
-        File folder=new File(path);
-        if(!folder.exists()&&!folder.mkdirs()){
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(FBOActivity.this, "无法保存照片", Toast.LENGTH_SHORT).show();
-                }
-            });
-            return;
-        }
+//        File folder=new File(path);
+//        if(!folder.exists()&&!folder.mkdirs()){
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Toast.makeText(FBOActivity.this, "无法保存照片", Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//            return;
+//        }
         long dataTake = System.currentTimeMillis();
         final String jpegName=path+ dataTake +".jpg";
-        try {
-            FileOutputStream fout = new FileOutputStream(jpegName);
-            BufferedOutputStream bos = new BufferedOutputStream(fout);
-            b.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-            bos.flush();
-            bos.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+//        try {
+//            FileOutputStream fout = new FileOutputStream(jpegName);
+//            BufferedOutputStream bos = new BufferedOutputStream(fout);
+//            b.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+//            bos.flush();
+//            bos.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
