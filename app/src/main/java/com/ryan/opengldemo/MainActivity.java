@@ -1,6 +1,8 @@
 package com.ryan.opengldemo;
 
+import android.Manifest;
 import android.content.Intent;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,10 +16,20 @@ import com.ryan.opengldemo.triangle.TriangleActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final String[] BASIC_PERMISSIONS = new String[]{
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA,
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        startRequestPermission();
+    }
+
+    private void startRequestPermission() {
+        ActivityCompat.requestPermissions(this,BASIC_PERMISSIONS,0x10);
     }
 
     // 绘制三角形

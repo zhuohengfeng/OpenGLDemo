@@ -8,4 +8,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <LinearLayout
+        android:layout_gravity="top"
+        android:orientation="horizontal"
+        android:background="#80D5D5D5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <CheckBox
+            android:id="@+id/cb_beauty"
+            android:text="打开美颜"
+            android:textColor="#ff00ff"
+            android:layout_gravity="center"
+            android:checked="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
 </FrameLayout>

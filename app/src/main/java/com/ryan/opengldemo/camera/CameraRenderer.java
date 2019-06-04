@@ -35,7 +35,10 @@ class CameraRenderer implements GLSurfaceView.Renderer {
     private int mAttrVertex;
     private int mAttrTexurePos;
     private int mUniTexureId;
+    private int mUniBeautyLocation;
     private int uTextureMatrixLocation;
+
+    private boolean mIsBeautyOn = false;
 
     private FloatBuffer mVertexBuffer;
     private FloatBuffer mTextureCoordsBuffer;
@@ -111,6 +114,7 @@ class CameraRenderer implements GLSurfaceView.Renderer {
         mAttrTexurePos = GLES20.glGetAttribLocation(mProgram, "aTexture");
         mUniTexureId = GLES20.glGetUniformLocation(mProgram, "uTextureId");
         uTextureMatrixLocation = GLES20.glGetUniformLocation(mProgram, "uTextureMatrix");
+        mUniBeautyLocation = GLES20.glGetUniformLocation(mProgram, "uBeauty");
     }
 
     public void setCamera(CameraV2Api camera2Api) {
@@ -143,6 +147,7 @@ class CameraRenderer implements GLSurfaceView.Renderer {
         GLES20.glActiveTexture(GL_TEXTURE_EXTERNAL_OES); // 激活
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mOESTextureId); // 操作之前先绑定
         GLES20.glUniform1i(mUniTexureId, 0); // 表示第0个texture，一共可以有32个texure,
+        GLES20.glUniform1i(mUniBeautyLocation, mIsBeautyOn ? 1 : 0);
 
         GLES20.glUniformMatrix4fv(uTextureMatrixLocation, 1, false, transformMatrix, 0);
 
@@ -176,4 +181,7 @@ class CameraRenderer implements GLSurfaceView.Renderer {
     }
 
 
+    public void setBeauty(boolean isChecked) {
+        mIsBeautyOn = isChecked;
+    }
 }

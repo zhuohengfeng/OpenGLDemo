@@ -17,6 +17,8 @@ public class CameraActivity extends Activity {
 
     private CameraV2Api mCamera2Api;
 
+    private CheckBox mCheckBox;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +33,14 @@ public class CameraActivity extends Activity {
 
         mCamera2Api = new CameraV2Api(this);
         mTextureRenderer.setCamera(mCamera2Api);
+
+        mCheckBox = findViewById(R.id.cb_beauty);
+        mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mTextureRenderer.setBeauty(isChecked);
+            }
+        });
     }
 
     @Override
