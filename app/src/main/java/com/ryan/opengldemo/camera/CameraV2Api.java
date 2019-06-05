@@ -129,6 +129,7 @@ public class CameraV2Api {
     public void startPreview(SurfaceTexture surfaceTexture) {
         mSurfaceTexture = surfaceTexture;
         mSurfaceTexture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
+        // 当有数据时，通知glsurfaceview更新
         mSurfaceTexture.setOnFrameAvailableListener(new SurfaceTexture.OnFrameAvailableListener() {
             @Override
             public void onFrameAvailable(SurfaceTexture surfaceTexture) {

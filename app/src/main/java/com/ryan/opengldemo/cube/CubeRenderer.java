@@ -40,6 +40,7 @@ class CubeRenderer implements GLSurfaceView.Renderer {
             1.0f,1.0f,-1.0f,     //反面右上7
     };
 
+    // 使用顶点索引法绘制
     final short index_array[]={
             6,7,4,6,4,5,    //后面
             6,3,7,6,2,3,    //右面
@@ -49,6 +50,7 @@ class CubeRenderer implements GLSurfaceView.Renderer {
             0,7,3,0,4,7,    //上面
     };
 
+    // 每个顶点的颜色
     float color_array[] = {
             0f,1f,0f,1f,
             0f,1f,0f,1f,
@@ -120,9 +122,7 @@ class CubeRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         GLES20.glViewport(0, 0, width, height);
         float ratio = (float)width/height;
-        // 设置投影矩阵, 这里的near表示垂直于观察方向的近平面，far表示垂直于观察方向的远平面
-        // 这里的near, far不是坐标，就是离摄像机的距离
-        // 如果距离越近，投影出来的大小越小
+        // 设置投影矩阵
         MatrixState.setProjectFrustum(-ratio, ratio, -1, 1, 3, 20);
         // 设置相机
         MatrixState.setCamera(0f, 0f, 10.0f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);

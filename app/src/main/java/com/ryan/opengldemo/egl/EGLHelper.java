@@ -69,14 +69,11 @@ public class EGLHelper {
                 EGL10.EGL_DEPTH_SIZE, depth, //指定深度缓存(Z Buffer)大小
                 EGL10.EGL_RENDERABLE_TYPE, renderType, //指定渲染api版本, EGL14.EGL_OPENGL_ES2_BIT
                 EGL10.EGL_NONE };  //总是以EGL10.EGL_NONE结尾
-
         //获取Display
         mEgl= (EGL10) EGLContext.getEGL();
         mEglDisplay=mEgl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
-
         int[] version=new int[2];    //主版本号和副版本号
         mEgl.eglInitialize(mEglDisplay,version);
-
         //选择Config
         int[] configNum=new int[1];
         mEgl.eglChooseConfig(mEglDisplay, attributes,null,0,configNum);
@@ -99,7 +96,7 @@ public class EGLHelper {
             EGL10.EGL_NONE
         };
         mEglContext=mEgl.eglCreateContext(mEglDisplay,mEglConfig,shareContext,contextAttr);
-        makeCurrent();
+        makeCurrent(); // 当前GL context
         return GlError.OK;
     }
 

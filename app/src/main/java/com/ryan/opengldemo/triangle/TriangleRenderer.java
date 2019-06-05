@@ -65,9 +65,12 @@ class TriangleRenderer implements GLSurfaceView.Renderer {
     }
 
     private void initShader() {
-        String vertexSource = ShaderUtil.loadFromAssetsFile("triangle_vertex.glsl" , mContext.getResources());
-        String fragmentSource = ShaderUtil.loadFromAssetsFile("triangle_fragment.glsl" , mContext.getResources());
+        String vertexSource = ShaderUtil.loadFromAssetsFile("triangle_vertex.glsl" ,
+                mContext.getResources());
+        String fragmentSource = ShaderUtil.loadFromAssetsFile("triangle_fragment.glsl" ,
+                mContext.getResources());
         mProgram = ShaderUtil.createProgram(vertexSource, fragmentSource);
+
         mAttrVertex = GLES20.glGetAttribLocation(mProgram, "aVertex");
         mAttrColor = GLES20.glGetAttribLocation(mProgram, "aColor");
     }

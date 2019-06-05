@@ -93,7 +93,7 @@ class CameraRenderer implements GLSurfaceView.Renderer {
     private int initTextureData() {
         int[] tex = new int[1];
         GLES20.glGenTextures(1, tex, 0);
-        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, tex[0]); // 这里就告诉TEXTURE0 ，绑定的是GL_TEXTURE_EXTERNAL_OES
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, tex[0]);
         GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
                 GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
         GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
